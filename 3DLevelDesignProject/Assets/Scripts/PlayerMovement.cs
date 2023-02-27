@@ -8,12 +8,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] float moveSpeed;
+    private float startingSpeed;
     [SerializeField] Transform orientation;
     [SerializeField] float groundDrag;
     [SerializeField] float jumpForce;
     [SerializeField] float jumpCooldown;
     [SerializeField] float airMult;
+    [SerializeField] float wallRunSpeed;
     bool canJump = true;
+    [HideInInspector] public bool wallRunning;
 
     [Header("Ground Check")]
     [SerializeField] float playerHeight;
@@ -29,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        startingSpeed = moveSpeed;
     }
     
     void Update()
@@ -45,6 +49,11 @@ public class PlayerMovement : MonoBehaviour
         }
         else{
             rb.drag = 0;
+        }
+
+        //respawn player if they fall off the map
+        if(transform.position.y < -15){
+            transform.position = new Vector3(0f, 1.5f, 0f);
         }
     }
 
@@ -70,6 +79,14 @@ public class PlayerMovement : MonoBehaviour
         }
         else if(!grounded){
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMult, ForceMode.Force);
+        }
+
+        //sets player speed if they are wall running
+        if(wallRunning){
+            moveSpeed = wallRunSpeed;
+        }
+        else{
+            moveSpeed = startingSpeed;
         }
     }
 
