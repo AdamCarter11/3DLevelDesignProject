@@ -27,6 +27,12 @@ public class PlayerMovement : MonoBehaviour
     float verticalInput;
     Vector3 moveDir;
     Rigidbody rb;
+
+    [Header("Platform vars")]
+    [SerializeField] float disappearTime;
+    [SerializeField] float fadeSpeed;
+    Color startColor;
+    GameObject currFloor;
     
     void Start()
     {
@@ -107,5 +113,43 @@ public class PlayerMovement : MonoBehaviour
     }
     private void ResetJump(){
         canJump = true;
+    }
+
+    private void OnCollisionEnter(Collision other) {
+         if(other.gameObject.CompareTag("dFloor")){
+            currFloor = other.gameObject;
+            startColor = currFloor.GetComponent<Renderer>().material.color;
+            StartCoroutine(FadeOut());
+            
+        }
+    }
+
+    IEnumerator FadeOut(){
+        while(currFloor.GetComponent<Renderer>().material.color.a >= .5f){
+            Color startingColor = currFloor.GetComponent<Renderer>().material.color;
+            float fadeAmount = startingColor.a - (fadeSpeed * Time.deltaTime);
+
+            startingColor = new Color(startingColor.r, startingColor.g, startingColor.b, fadeAmount);
+            currFloor.GetComponent<Renderer>().material.color = startingColor;
+            if(currFloor.GetComponent<Renderer>().material.color.a <= .5f){
+                StartCoroutine(Disappear());
+            }
+            yield return null;
+        }
+        
+    }
+    IEnumerator Disappear(){
+        print("Trigger Disappear");
+        currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y - 1f, currFloor.transform.position.z);
+        currFloor.SetActive(false);
+        yield return new WaitForSeconds(disappearTime);
+        StartCoroutine(Appear());
+    }
+    IEnumerator Appear(){
+        yield return new WaitForSeconds(2f);
+        print("activate");
+        currFloor.SetActive(true);
+        currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y + 1f, currFloor.transform.position.z);
+        currFloor.GetComponent<Renderer>().material.color = startColor;
     }
 }
