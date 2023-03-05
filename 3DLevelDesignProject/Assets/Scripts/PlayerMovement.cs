@@ -33,6 +33,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float fadeSpeed;
     Color startColor;
     GameObject currFloor;
+
+    //grappling hook vars
+    public bool freeze;
+    public bool activeGrapple;
+
     
     void Start()
     {
@@ -46,11 +51,18 @@ public class PlayerMovement : MonoBehaviour
         //checks if we are grounded
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .2f, whatIsGround);
 
-        MovePlayer();
+        if(freeze){
+            moveSpeed = 0;
+            rb.velocity = Vector3.zero;
+        }
+        else{
+            MovePlayer();
+        }
+        
         SpeedControl();
 
         //applies drag if we are grounded (prevents ice-like feel)
-        if(grounded){
+        if(grounded && !activeGrapple){
             rb.drag = groundDrag;
         }
         else{
@@ -61,9 +73,14 @@ public class PlayerMovement : MonoBehaviour
         if(transform.position.y < -15){
             transform.position = new Vector3(0f, 1.5f, 0f);
         }
+
+        
     }
 
     private void MovePlayer(){
+        if(activeGrapple){
+            return;
+        }
         //get input
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
@@ -98,6 +115,9 @@ public class PlayerMovement : MonoBehaviour
 
     //caps player speed
     private void SpeedControl(){
+        if(activeGrapple){
+            return;
+        }
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         if(flatVel.magnitude > moveSpeed){
@@ -116,11 +136,16 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision other) {
-         if(other.gameObject.CompareTag("dFloor")){
+        if(other.gameObject.CompareTag("dFloor")){
             currFloor = other.gameObject;
             startColor = currFloor.GetComponent<Renderer>().material.color;
             StartCoroutine(FadeOut());
             
+        }
+        if(enableMovementOnNextTouch){
+            enableMovementOnNextTouch = false;
+            ResetRestrictions();
+            GetComponent<GrapplingHook>().StopGrapple();
         }
     }
 
@@ -138,6 +163,32 @@ public class PlayerMovement : MonoBehaviour
         }
         
     }
+
+    //grappling functions
+    private Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajHeight){
+        float grav = Physics.gravity.y;
+        float displacementY = endPoint.y - startPoint.y;
+        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
+        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * grav * trajHeight);
+        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajHeight / grav) + Mathf.Sqrt(2*(displacementY - trajHeight)/grav));
+        return velocityXZ + velocityY;
+    }
+    private Vector3 velocityToSet;
+    private void SetVelocity(){
+        enableMovementOnNextTouch = true;
+        rb.velocity = velocityToSet;
+    }
+    public void ResetRestrictions(){
+        activeGrapple = false;
+    }
+    private bool enableMovementOnNextTouch;
+    public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight){
+        activeGrapple = true;
+        rb.velocity = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
+        Invoke(nameof(SetVelocity), .1f);
+    }
+
+    //disappearing platforms
     IEnumerator Disappear(){
         print("Trigger Disappear");
         currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y - 1f, currFloor.transform.position.z);
