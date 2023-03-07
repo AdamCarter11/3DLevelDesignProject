@@ -33,7 +33,7 @@ public class GrapplingHook : MonoBehaviour
     private void Update() {
         if(Input.GetMouseButtonDown(0)){
             //if we want grapple, uncomment this and fix
-            //StartGrapple();
+            StartGrapple();
         }
         if(grappleCdTimer > 0){
             grappleCdTimer -= Time.deltaTime;
