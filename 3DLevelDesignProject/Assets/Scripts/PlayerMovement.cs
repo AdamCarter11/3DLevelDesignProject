@@ -50,6 +50,8 @@ public class PlayerMovement : MonoBehaviour
     {
         //checks if we are grounded
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .2f, whatIsGround);
+        //float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
+        //rotY += mouseX;
 
         if(freeze){
             moveSpeed = 0;
@@ -99,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(grounded){
             rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+            //freeze = false;
         }
         else if(!grounded){
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMult, ForceMode.Force);
@@ -173,6 +176,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajHeight / grav) + Mathf.Sqrt(2*(displacementY - trajHeight)/grav));
         return velocityXZ + velocityY;
     }
+
     private Vector3 velocityToSet;
     private void SetVelocity(){
         enableMovementOnNextTouch = true;
@@ -184,8 +188,9 @@ public class PlayerMovement : MonoBehaviour
     private bool enableMovementOnNextTouch;
     public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight){
         activeGrapple = true;
-        rb.velocity = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
+        velocityToSet = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
         Invoke(nameof(SetVelocity), .1f);
+        Invoke(nameof(ResetRestrictions), 3f);
     }
 
     //disappearing platforms

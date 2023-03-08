@@ -41,17 +41,19 @@ public class GrapplingHook : MonoBehaviour
     }
 
     private void StartGrapple(){
-        pm.freeze = true;
         if(grappleCdTimer > 0){
             return;
         }
+        pm.freeze = true;
         grappling = true;
         RaycastHit hit;
         if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrapplDistance, whatIsGrappleable)){
+            print("Start grapple");
             grapplePoint = hit.point;
             Invoke(nameof(ExcecuteGrapple), grappleDelay);
         }
         else{
+            print("Stopped grappl");
             grapplePoint = cam.position + cam.forward * maxGrapplDistance;
             Invoke(nameof(StopGrapple), grappleDelay);
         }
@@ -66,8 +68,10 @@ public class GrapplingHook : MonoBehaviour
     private void ExcecuteGrapple(){
         pm.freeze = false;
         Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
+        
         float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
         float highestPointOnArc = grapplePointRelativeYPos + overShootYAxis;
+        
         if(grapplePointRelativeYPos < 0){
             highestPointOnArc = overShootYAxis;
         }
