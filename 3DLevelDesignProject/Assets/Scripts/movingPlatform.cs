@@ -15,6 +15,13 @@ public class movingPlatform : MonoBehaviour
         max = transform.position;
     }
     private void Update() {
+        
+    }
+    private void FixedUpdate() {
+        PlatMovement();
+    }
+
+    private void PlatMovement(){
         if(vertical){
             transform.position = new Vector3(transform.position.x, Mathf.PingPong(Time.time * speed, max.y + range - min.y) + min.y, transform.position.z);
         }
@@ -24,6 +31,16 @@ public class movingPlatform : MonoBehaviour
         else{
             transform.position = new Vector3(Mathf.PingPong(Time.time * speed, max.x + range - min.x) + min.x, transform.position.y, transform.position.z);
         }
-        
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.CompareTag("Player")){
+            other.gameObject.transform.parent.parent = this.transform;
+        }
+    }
+    private void OnTriggerExit(Collider other) {
+        if(other.gameObject.CompareTag("Player")){
+            other.transform.parent.parent = null;
+        }
     }
 }

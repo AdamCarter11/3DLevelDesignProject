@@ -7529,7 +7529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea29c655bf7cf9440bfef9aad2c1c994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
+  moveSpeed: 0.5
   orientation: {fileID: 1845234063}
   groundDrag: 5
   jumpForce: 8
@@ -7563,7 +7563,7 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  wallRunForce: 2
+  wallRunForce: 1.1
   maxWallRunTime: 1.5
   wallCheckDist: 0.4
   minJumpHeight: 1
@@ -13645,7 +13645,7 @@ GameObject:
   - component: {fileID: 1857265274}
   m_Layer: 7
   m_Name: PlayerModel
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
