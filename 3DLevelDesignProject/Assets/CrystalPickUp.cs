@@ -6,7 +6,7 @@ public class CrystalPickUp : MonoBehaviour
 {
     public int value;
 
-
+    public GameObject pickupEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +25,8 @@ public class CrystalPickUp : MonoBehaviour
         if (other.tag == "Player")
         {
             FindObjectOfType<GameManager>().AddCrystal(value);
+
+            Instantiate(pickupEffect, transform.position, transform.rotation);
 
             Destroy(gameObject);
         }
