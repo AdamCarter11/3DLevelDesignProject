@@ -9,7 +9,7 @@ public class WallRunning : MonoBehaviour
     [Header("Wall Running")]
     [SerializeField] LayerMask whatIsWall;
     [SerializeField] LayerMask whatIsGround;
-    [SerializeField] float wallRunForce;
+    [SerializeField] float wallRunForce, wallClimbSpeed;
     [SerializeField] float maxWallRunTime;
     float wallRunTimer;
 
@@ -85,8 +85,11 @@ public class WallRunning : MonoBehaviour
 
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            rb.velocity = new Vector3(rb.velocity.x, wallClimbSpeed, rb.velocity.z);
+
         //push player towards wall
-        if(!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput > 0)){
+        if(!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0)){
             rb.AddForce(-wallNormal * 100, ForceMode.Force);
         }
         

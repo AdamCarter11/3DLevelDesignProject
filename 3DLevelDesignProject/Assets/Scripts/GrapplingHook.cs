@@ -23,7 +23,7 @@ public class GrapplingHook : MonoBehaviour
     public float grapplingCd;
     private float grappleCdTimer;
 
-    private bool grappling;
+    private bool grappling = false;
 
     private void Start() {
         pm = GetComponent<PlayerMovement>();
@@ -31,9 +31,12 @@ public class GrapplingHook : MonoBehaviour
     }
 
     private void Update() {
-        if(Input.GetMouseButtonDown(0)){
+        if(Input.GetMouseButtonDown(0) && !grappling){
             //if we want grapple, uncomment this and fix
             StartGrapple();
+        }
+        else if(Input.GetMouseButtonDown(0) && grappling){
+            StopGrapple();
         }
         if(grappleCdTimer > 0){
             grappleCdTimer -= Time.deltaTime;

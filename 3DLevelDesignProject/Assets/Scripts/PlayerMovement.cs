@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float wallRunSpeed;
     bool canJump = true;
     [HideInInspector] public bool wallRunning;
+    bool canMove = true;
 
     [Header("Ground Check")]
     [SerializeField] float playerHeight;
@@ -50,6 +51,9 @@ public class PlayerMovement : MonoBehaviour
     {
         //checks if we are grounded
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .2f, whatIsGround);
+        if(wallRunning){
+            grounded = true;
+        }
         //float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         //rotY += mouseX;
 
@@ -58,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = Vector3.zero;
         }
         else{
-            MovePlayer();
+            GetInputs();
         }
         
         SpeedControl();
@@ -78,8 +82,7 @@ public class PlayerMovement : MonoBehaviour
 
         
     }
-
-    private void MovePlayer(){
+    private void GetInputs(){
         if(activeGrapple){
             return;
         }
@@ -94,25 +97,44 @@ public class PlayerMovement : MonoBehaviour
 
             Invoke(nameof(ResetJump), jumpCooldown);
         }
+        if(Input.GetKey(KeyCode.LeftShift)){
+            canMove = false;
+        }
+        else{
+            canMove = true;
+        }
+    }
 
+    private void MovePlayer(){
         //calculate force and apply to player
         moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
-        rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+        //rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
 
-        if(grounded){
-            rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
-            //freeze = false;
+        if(canMove){
+            if(grounded){
+                rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+                //freeze = false;
+            }
+            else if(!grounded){
+                rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMult, ForceMode.Force);
+            }
         }
-        else if(!grounded){
-            rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMult, ForceMode.Force);
+        else{
+            rb.velocity = Vector3.zero;
         }
 
         //sets player speed if they are wall running
         if(wallRunning){
             moveSpeed = wallRunSpeed;
+            canJump = true;
         }
         else{
             moveSpeed = startingSpeed;
+        }
+    }
+    private void FixedUpdate() {
+        if(!activeGrapple){
+            MovePlayer();
         }
     }
 
@@ -206,6 +228,6 @@ public class PlayerMovement : MonoBehaviour
         print("activate");
         currFloor.SetActive(true);
         currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y + 1f, currFloor.transform.position.z);
-        currFloor.GetComponent<Renderer>().material.color = startColor;
+        currFloor.GetComponent<Renderer>().material.color = new Color(startColor.r, startColor.g, startColor.b, 1);
     }
 }
