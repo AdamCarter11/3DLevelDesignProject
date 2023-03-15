@@ -5,7 +5,7 @@ using UnityEngine;
 public class GrapplingHook : MonoBehaviour
 {
     [Header("Refrences")]
-    PlayerMovement pm;
+    PlayerMovementTake2 pm;
     public Transform cam;
     public Transform gunTip;
     public LayerMask whatIsGrappleable;
@@ -15,6 +15,7 @@ public class GrapplingHook : MonoBehaviour
     public float maxGrapplDistance;
     public float grappleDelay;
     public float overShootYAxis;
+    public float raycastWidth;
 
 
     public Vector3 grapplePoint;
@@ -26,7 +27,7 @@ public class GrapplingHook : MonoBehaviour
     private bool grappling = false;
 
     private void Start() {
-        pm = GetComponent<PlayerMovement>();
+        pm = GetComponent<PlayerMovementTake2>();
 
     }
 
@@ -50,7 +51,7 @@ public class GrapplingHook : MonoBehaviour
         pm.freeze = true;
         grappling = true;
         RaycastHit hit;
-        if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrapplDistance, whatIsGrappleable)){
+        if(Physics.SphereCast(cam.position, raycastWidth, cam.forward, out hit, maxGrapplDistance, whatIsGrappleable)){
             print("Start grapple");
             grapplePoint = hit.point;
             Invoke(nameof(ExcecuteGrapple), grappleDelay);

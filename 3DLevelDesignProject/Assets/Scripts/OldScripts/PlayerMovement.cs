@@ -15,7 +15,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpCooldown;
     [SerializeField] float airMult;
     [SerializeField] float wallRunSpeed;
+    [SerializeField] int maxJumps;
+    int resetJumps;
     bool canJump = true;
+    float resetJumpForce;
     [HideInInspector] public bool wallRunning;
     bool canMove = true;
 
@@ -45,6 +48,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         startingSpeed = moveSpeed;
+        resetJumps = maxJumps;
+        resetJumpForce = jumpForce;
     }
     
     void Update()
@@ -68,8 +73,12 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
 
         //applies drag if we are grounded (prevents ice-like feel)
-        if(grounded && !activeGrapple){
-            rb.drag = groundDrag;
+        if(grounded){
+            jumpForce = resetJumpForce;
+            maxJumps = resetJumps;
+            if(!activeGrapple){
+                rb.drag = groundDrag;
+            }
         }
         else{
             rb.drag = 0;
@@ -91,12 +100,21 @@ public class PlayerMovement : MonoBehaviour
         verticalInput = Input.GetAxis("Vertical");
         
         if(Input.GetKey(KeyCode.Space) && canJump && grounded){
-            print("Jumped");
+            //print("Jumped");
+            canJump = false;
+            Jump();
+            Invoke(nameof(ResetJump), jumpCooldown);
+            maxJumps--;
+        }
+        else if(Input.GetKey(KeyCode.Space) && canJump && maxJumps > 0){
+            jumpForce /= 2;
             canJump = false;
             Jump();
 
             Invoke(nameof(ResetJump), jumpCooldown);
+            maxJumps--;
         }
+
         if(Input.GetKey(KeyCode.LeftShift)){
             canMove = false;
         }

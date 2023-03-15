@@ -233,6 +233,7 @@ MonoBehaviour:
   jumpCooldown: 0.25
   airMult: 0.4
   wallRunSpeed: 8
+  maxJumps: 2
   wallRunning: 0
   playerHeight: 1
   whatIsGround:
@@ -261,6 +262,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   wallRunForce: 1.1
+  wallClimbSpeed: 0
   maxWallRunTime: 1.5
   wallCheckDist: 0.4
   minJumpHeight: 1
