@@ -44,6 +44,8 @@ public class PlayerMovementTake2 : MonoBehaviour
     [SerializeField] float fadeSpeed;
     Color startColor;
     GameObject currFloor;
+    GameObject[] disappearFloors;
+    bool canFade = true;
 
     private void Start()
     {
@@ -53,6 +55,7 @@ public class PlayerMovementTake2 : MonoBehaviour
         readyToJump = true;
         resetJumps = maxJumps;
         resetJumpForce = jumpForce;
+        disappearFloors = GameObject.FindGameObjectsWithTag("dFloor");
     }
 
     private void Update()
@@ -173,15 +176,28 @@ public class PlayerMovementTake2 : MonoBehaviour
             currFloor = other.gameObject;
             startColor = currFloor.GetComponent<Renderer>().material.color;
             StartCoroutine(FadeOut());
-            
+            //StartCoroutine(tempDisappear());
         }
         if(enableMovementOnNextTouch){
             enableMovementOnNextTouch = false;
             ResetRestrictions();
             GetComponent<GrapplingHook>().StopGrapple();
         }
+        if(other.gameObject.CompareTag("base") && currFloor != null){
+            foreach(GameObject tempFloor in disappearFloors){
+                canFade = false;
+                StopCoroutine(FadeOut());
+                StopCoroutine(tempDisappear());
+                tempFloor.SetActive(true);
+                tempFloor.GetComponent<Renderer>().material.color = new Color(startColor.r, startColor.g, startColor.b, 1);
+            }
+        }
     }
 
+    IEnumerator tempDisappear(){
+        yield return new WaitForSeconds(disappearTime);
+        currFloor.SetActive(false);
+    }
     IEnumerator FadeOut(){
         while(currFloor.GetComponent<Renderer>().material.color.a >= .5f){
             Color startingColor = currFloor.GetComponent<Renderer>().material.color;
@@ -200,7 +216,7 @@ public class PlayerMovementTake2 : MonoBehaviour
     //disappearing platforms
     IEnumerator Disappear(){
         print("Trigger Disappear");
-        currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y - 1f, currFloor.transform.position.z);
+        //currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y - 1f, currFloor.transform.position.z);
         currFloor.SetActive(false);
         yield return new WaitForSeconds(disappearTime);
         StartCoroutine(Appear());
@@ -209,7 +225,7 @@ public class PlayerMovementTake2 : MonoBehaviour
         yield return new WaitForSeconds(1f);
         print("activate");
         currFloor.SetActive(true);
-        currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y + 1f, currFloor.transform.position.z);
+        //currFloor.transform.position = new Vector3(currFloor.transform.position.x, currFloor.transform.position.y + 1f, currFloor.transform.position.z);
         currFloor.GetComponent<Renderer>().material.color = new Color(startColor.r, startColor.g, startColor.b, 1);
     }
 }

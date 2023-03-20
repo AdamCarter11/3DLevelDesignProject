@@ -6,6 +6,7 @@ TagManager:
   tags:
   - dFloor
   - MovingPlatform
+  - base
   layers:
   - Default
   - TransparentFX

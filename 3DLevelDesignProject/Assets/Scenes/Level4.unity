@@ -227,11 +227,11 @@ Transform:
   - {fileID: 2045299178}
   - {fileID: 877298060}
   - {fileID: 960780026}
+  - {fileID: 1269582712}
   - {fileID: 438890466}
-  - {fileID: 1558018489}
   - {fileID: 675336591}
   - {fileID: 1733689661}
-  - {fileID: 1269582712}
+  - {fileID: 1558018489}
   - {fileID: 1476571284}
   - {fileID: 831942625}
   - {fileID: 137828429}
@@ -3440,7 +3440,7 @@ GameObject:
   - component: {fileID: 792903769}
   m_Layer: 6
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3529,7 +3529,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25624
+  m_Name: pb_Mesh24504
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

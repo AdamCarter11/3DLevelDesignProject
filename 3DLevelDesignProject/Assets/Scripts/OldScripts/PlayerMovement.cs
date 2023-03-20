@@ -180,9 +180,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.CompareTag("dFloor")){
-            currFloor = other.gameObject;
-            startColor = currFloor.GetComponent<Renderer>().material.color;
-            StartCoroutine(FadeOut());
+            //currFloor = other.gameObject;
+            //startColor = currFloor.GetComponent<Renderer>().material.color;
+            //StartCoroutine(FadeOut());
             
         }
         if(enableMovementOnNextTouch){

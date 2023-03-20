@@ -14,7 +14,7 @@ public class FadeFloors : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.CompareTag("Player")){
-            StartCoroutine(FadeOut());
+            //StartCoroutine(FadeOut());
             print("Trigger Disappear");
         }
     }
