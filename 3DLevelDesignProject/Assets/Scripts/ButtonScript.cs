@@ -8,4 +8,7 @@ public class ButtonScript : MonoBehaviour
     public void restartGame(){
         SceneManager.LoadScene("Room1And2");
     }
+    public void quitGame(){
+        Application.Quit();
+    }
 }
