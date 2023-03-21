@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovementTake2 : MonoBehaviour
 {
@@ -183,7 +184,7 @@ public class PlayerMovementTake2 : MonoBehaviour
             ResetRestrictions();
             GetComponent<GrapplingHook>().StopGrapple();
         }
-        if(other.gameObject.CompareTag("base") && currFloor != null){
+        if((other.gameObject.CompareTag("base") || other.gameObject.CompareTag("MovingPlatform")) && currFloor != null){
             foreach(GameObject tempFloor in disappearFloors){
                 canFade = false;
                 StopCoroutine(FadeOut());
@@ -191,6 +192,22 @@ public class PlayerMovementTake2 : MonoBehaviour
                 tempFloor.SetActive(true);
                 tempFloor.GetComponent<Renderer>().material.color = new Color(startColor.r, startColor.g, startColor.b, 1);
             }
+        }
+    }
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.CompareTag("Section1")){
+            transform.position = new Vector3(7.8f, 12.3f, -1);
+        }
+        if(other.gameObject.CompareTag("Section2")){
+            SceneManager.LoadScene("Level3");
+        }
+        if(other.gameObject.CompareTag("Section3")){
+            SceneManager.LoadScene("Level4");
+        }
+        if(other.gameObject.CompareTag("Section4")){
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            SceneManager.LoadScene("Finish");
         }
     }
 
